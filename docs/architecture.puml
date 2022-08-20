@@ -1,0 +1,68 @@
+@startuml transform-hub-architecture
+skinparam backgroundColor transparent
+
+cloud "Data Sources" as sources {
+    database "Data Lakes" as lake
+    database "Warehouses" as warehouse
+    database "Databases" as db
+}
+
+rectangle "Transform Hub" as hub #LightBlue {
+    rectangle "Model Layer" as model {
+        rectangle "dbt Core" as dbt
+        rectangle "SQL Builder" as sql
+        rectangle "Python Models" as python
+    }
+
+    rectangle "Execution Engine" as engine #LightGreen {
+        rectangle "Compiler" as compiler
+        rectangle "Optimizer" as optimizer
+        rectangle "Executor" as executor
+    }
+
+    rectangle "Governance" as gov #Pink {
+        rectangle "Version Control" as version
+        rectangle "CI/CD" as cicd
+        rectangle "Tests" as tests
+    }
+
+    rectangle "Observability" as obs #Orange {
+        rectangle "Lineage" as lineage
+        rectangle "Metrics" as metrics
+        rectangle "Documentation" as docs
+    }
+}
+
+database "Transformed Data" as output {
+    database "Analytics" as analytics
+    database "ML Features" as features
+    database "Reports" as reports
+}
+
+sources --> model : Source
+model --> engine : Compile
+engine --> output : Transform
+gov --> model : Control
+obs --> [*] : Monitor
+
+note right of model
+  Multi-language
+  transformation models
+end note
+
+note right of engine
+  Smart execution with
+  incremental processing
+end note
+
+note right of gov
+  Enterprise-grade
+  governance
+end note
+
+note right of obs
+  Complete observability
+  and documentation
+end note
+
+@enduml
